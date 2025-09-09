@@ -9,7 +9,12 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/index.ts"
+      "dest": "/src/index.ts"
     }
-  ]
+  ],
+  "functions": {
+    "src/index.ts": {
+      "runtime": "nodejs18.x"
+    }
+  }
 }
