@@ -1,10 +1,12 @@
-import { Hono } from "hono";
+import { Hono } from "hono"
 
-const app = new Hono();
+const app = new Hono()
 
-app.get("/messages", (C) => C.text("Api is running "));
+app.get("/messages", (c) => c.text("API is running"))
 
-app.post("/messages", async (message) => {
-  const body = await message.req.json();
-  return message.json({ success: true, data: body });
-});
+app.post("/messages", async (c) => {
+    const body = await c.req.json()
+    return c.json({ success: true, data: body })
+})
+
+export default app
