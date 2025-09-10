@@ -1,7 +1,12 @@
 import { Hono } from "hono";
 import prisma from "./lib/prisma.js";
+import { bearerAuth } from "hono/bearer-auth";
 
 const app = new Hono();
+
+const token = "HonoIsGood";
+
+app.use("/*", bearerAuth({ token }));
 
 app.get("/gallery", async (c) => {
   const users = await prisma.gallery.findMany({
