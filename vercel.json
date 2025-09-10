@@ -4,7 +4,7 @@
     {
       "src": "src/index.ts",
       "use": "@vercel/node",
-      "config": { "runtime": "nodejs18.x" }
+      "config": { "runtime": "nodejs20.x" }
     }
   ],
   "routes": [
