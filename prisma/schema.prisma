@@ -13,9 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id    Int    @id @default(autoincrement())
-  name      String
-  age       Int
-  createdAt DateTime @default(now())
+model Gallery{
+  id           Int      @id @default(autoincrement())
+  picture      String  
+  age          Int
+  enCategory   String
+  faCategory   String
+  farsiTitle   String
+  englishTitle String 
+  date         Int
+  faDesc       String
+  enDesc       String
+  likes        Int
+  createdAt    DateTime @default(now())
+}
+
+model ConnectionMessages{
+  id          Int     @id @default(autoincrement())
+  fullName    String
+  email       String
+  Message     String
+  createdAt   DateTime @default(now())
 }
