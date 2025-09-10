@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { prisma } from "./lib/prisma.js";
+import prisma from "./lib/prisma.js";
 const app = new Hono();
 app.get("/users", async (c) => {
     const users = await prisma.user.findMany({
