@@ -1,10 +1,5 @@
 import { Hono } from "hono";
-import { prisma } from "./lib/prisma.js";
-
-interface User{
-    name: string;
-    age: number;
-}
+import prisma from "./lib/prisma.js";
 
 const app = new Hono();
 

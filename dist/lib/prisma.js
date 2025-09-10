@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-const globalForPrisma = globalThis;
+const globalForPrisma = global;
 export const prisma = globalForPrisma.prisma ||
     new PrismaClient({
         log: ["query"],

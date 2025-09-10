@@ -1,11 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+let prisma: PrismaClient;
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ["query"],
-  });
+if (process.env.NODE_ENV === "production") {
+  prisma = new PrismaClient();
+} else {
+  // جلوگیری از multiple instances در development
+  if (!(globalThis as any).prisma) {
+    (globalThis as any).prisma = new PrismaClient();
+  }
+  prisma = (globalThis as any).prisma;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+export default prisma;
