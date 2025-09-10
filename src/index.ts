@@ -4,7 +4,7 @@ import { bearerAuth } from "hono/bearer-auth";
 
 const app = new Hono();
 
-const token = "HonoIsGood";
+const token = process.env.bearerAuthToken!;
 
 app.use("/*", bearerAuth({ token }));
 
