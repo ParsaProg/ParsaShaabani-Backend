@@ -3,7 +3,6 @@ import prisma from "./lib/prisma.js";
 
 const app = new Hono();
 
-
 app.get("/users", async (c) => {
   const users = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
@@ -14,18 +13,10 @@ app.get("/users", async (c) => {
 app.post("/users", async (c) => {
   try {
     const body = await c.req.json<{ name: string; age: number }>();
-
     if (!body.name || !body.age) {
       return c.json({ success: false, error: "name and age required" }, 400);
     }
-
-    const user = await prisma.user.create({
-      data: {
-        name: body.name,
-        age: body.age,
-      },
-    });
-
+    const user = await prisma.user.create({ data: body });
     return c.json({ success: true, data: user });
   } catch (error) {
     console.error(error);
