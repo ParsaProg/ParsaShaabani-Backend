@@ -1,5 +1,6 @@
 import { Hono } from "hono";
-import prisma from "../lib/prisma";
+import prisma from "../lib/prisma.js";
+
 const messages = new Hono();
 messages.get("/", async (c) => {
     const messagesData = await prisma.connectionMessages.findMany({

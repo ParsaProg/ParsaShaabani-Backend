@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { bearerAuthMiddleware } from "./middlewares/auth";
-import galleryRoutes from "./routes/gallery";
-import messageRoutes from "./routes/messages";
+import { bearerAuthMiddleware } from "./middlewares/auth.js";
+import galleryRoutes from "./routes/gallery.js";
+import messageRoutes from "./routes/messages.js";
 const app = new Hono();
 app.use("/*", bearerAuthMiddleware);
 // روت‌ها

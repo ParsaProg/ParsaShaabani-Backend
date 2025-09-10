@@ -1,14 +1,14 @@
 import { Hono } from "hono";
-import prisma from "../lib/prisma";
+import prisma from "../lib/prisma.js";
 const gallery = new Hono();
-// GET /gallery
+
 gallery.get("/", async (c) => {
     const users = await prisma.gallery.findMany({
         orderBy: { createdAt: "desc" },
     });
     return c.json(users);
 });
-// POST /gallery
+
 gallery.post("/", async (c) => {
     try {
         const body = await c.req.json();
