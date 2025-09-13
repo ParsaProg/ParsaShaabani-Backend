@@ -21,7 +21,7 @@ model Gallery{
   faCategory   String
   farsiTitle   String
   englishTitle String 
-  date         Int
+  date         String
   faDesc       String
   enDesc       String
   likes        Int

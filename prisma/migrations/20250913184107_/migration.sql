@@ -7,7 +7,7 @@ CREATE TABLE "public"."Gallery" (
     "faCategory" TEXT NOT NULL,
     "farsiTitle" TEXT NOT NULL,
     "englishTitle" TEXT NOT NULL,
-    "date" INTEGER NOT NULL,
+    "date" TEXT NOT NULL,
     "faDesc" TEXT NOT NULL,
     "enDesc" TEXT NOT NULL,
     "likes" INTEGER NOT NULL,
