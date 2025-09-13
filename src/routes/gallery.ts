@@ -50,7 +50,7 @@ gallery.post("/", async (c) => {
   }
 });
 
-gallery.put("/", async (c) => {
+gallery.put("/:id", async (c) => {
   const id = c.req.param("id");
   const body = await c.req.json<{
     picture: string;
