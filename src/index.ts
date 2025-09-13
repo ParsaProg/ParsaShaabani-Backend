@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { bearerAuthMiddleware } from "./middlewares/auth.js";
 import galleryRoutes from "./routes/gallery.js";
 import messageRoutes from "./routes/messages.js";
@@ -6,6 +7,15 @@ import messageRoutes from "./routes/messages.js";
 const app = new Hono();
 
 app.use("/*", bearerAuthMiddleware);
+
+app.use(
+  "/*",
+  cors({
+    origin: "*", // or "http://localhost:3000" for stricter setup
+    allowHeaders: ["Authorization", "Content-Type"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
 
 // روت‌ها
 app.route("/gallery", galleryRoutes);
