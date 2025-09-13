@@ -6,8 +6,6 @@ import messageRoutes from "./routes/messages.js";
 
 const app = new Hono();
 
-app.use("/*", bearerAuthMiddleware);
-
 app.use(
   "/*",
   cors({
@@ -16,6 +14,8 @@ app.use(
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
+
+app.use("/*", bearerAuthMiddleware);
 
 // روت‌ها
 app.route("/gallery", galleryRoutes);
