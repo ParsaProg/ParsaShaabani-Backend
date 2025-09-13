@@ -21,7 +21,7 @@ gallery.post("/", async (c) => {
       faCategory: string;
       farsiTitle: string;
       englishTitle: string;
-      date: number;
+      date: string;
       faDesc: string;
       enDesc: string;
       likes: number;
@@ -47,6 +47,47 @@ gallery.post("/", async (c) => {
   } catch (error) {
     console.error(error);
     return c.json({ success: false, error: "Invalid request" }, 400);
+  }
+});
+
+gallery.put("/", async (c) => {
+  const id = c.req.param("id");
+  const body = await c.req.json<{
+    picture: string;
+    age: number;
+    enCategory: string;
+    faCategory: string;
+    farsiTitle: string;
+    englishTitle: string;
+    date: string;
+    faDesc: string;
+    enDesc: string;
+    likes: number;
+  }>();
+
+  if (
+    !body.picture ||
+    body.age === undefined ||
+    !body.enCategory ||
+    !body.faCategory ||
+    !body.farsiTitle ||
+    !body.englishTitle ||
+    body.date === undefined ||
+    !body.faDesc ||
+    !body.enDesc ||
+    body.likes === undefined
+  ) {
+    return c.json({ success: false, message: "All fields required" });
+  }
+
+  try {
+    const user = await prisma.gallery.update({
+      where: { id: Number(id) },
+      data: body,
+    });
+    return c.json({ success: true, user: user });
+  } catch(err: any) {
+    throw new Error("Can't edit data with error: " + err);
   }
 });
 
