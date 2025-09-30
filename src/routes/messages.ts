@@ -30,4 +30,16 @@ messages.post("/", async (c) => {
   }
 });
 
+messages.delete("/:id", async (c) => {
+  const id = c.req.param("id");
+  try {
+    const deletedMessage = await prisma.connectionMessages.delete({
+      where: { id: Number(id) },
+    });
+    return c.json({ success: true, deletedMessage: deletedMessage });
+  } catch {
+    return c.json({ success: false, error: "Invalid request" }, 400);
+  }
+});
+
 export default messages;
