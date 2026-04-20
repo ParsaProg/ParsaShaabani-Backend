@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import prisma from "../lib/prisma.js";
+import prisma from "../lib/prisma";
 const gallery = new Hono();
 // GET /gallery
 gallery.get("/", async (c) => {
@@ -30,6 +30,32 @@ gallery.post("/", async (c) => {
     catch (error) {
         console.error(error);
         return c.json({ success: false, error: "Invalid request" }, 400);
+    }
+});
+gallery.put("/:id", async (c) => {
+    const id = c.req.param("id");
+    const body = await c.req.json();
+    if (!body.picture ||
+        body.age === undefined ||
+        !body.enCategory ||
+        !body.faCategory ||
+        !body.farsiTitle ||
+        !body.englishTitle ||
+        body.date === undefined ||
+        !body.faDesc ||
+        !body.enDesc ||
+        body.likes === undefined) {
+        return c.json({ success: false, message: "All fields required" });
+    }
+    try {
+        const user = await prisma.gallery.update({
+            where: { id: Number(id) },
+            data: body,
+        });
+        return c.json({ success: true, user: user });
+    }
+    catch (err) {
+        throw new Error("Can't edit data with error: " + err);
     }
 });
 export default gallery;

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import prisma from "../lib/prisma.js";
+import prisma from "../lib/prisma";
 
 const gallery = new Hono();
 

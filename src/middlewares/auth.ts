@@ -1,19 +1,14 @@
 import { Context, Next } from 'hono'
 import { sign, verify } from 'hono/jwt'
+import { setCookie, getCookie, deleteCookie } from 'hono/cookie'
 
-// ⚠️ MUST be in your .env
-const JWT_SECRET = process.env.bearerAuthToken!
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET is not defined')
-}
+const JWT_SECRET = "kos"
+if (!JWT_SECRET) throw new Error('JWT_SECRET not set')
 
 // ========================
-// Generate JWT
+// Generate Token
 // ========================
-export const generateToken = async (payload: {
-  id: string
-  username: string
-}) => {
+export const createToken = async (payload: any) => {
   return await sign(
     {
       ...payload,
@@ -24,32 +19,54 @@ export const generateToken = async (payload: {
 }
 
 // ========================
-// Middleware (Protect Routes)
+// Login (set cookie)
 // ========================
-export const authMiddleware = async (c: Context, next: Next) => {
-  const authHeader = c.req.header('Authorization')
+export const loginHandler = async (c: Context) => {
+  const { username, password } = await c.req.json()
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return c.json({ error: 'Unauthorized' }, 401)
+  // ⚠️ اینو بعداً با دیتابیس عوض کن
+  if (username !== 'admin' || password !== '1234') {
+    return c.json({ error: 'Invalid credentials' }, 401)
   }
 
-  const token = authHeader.split(' ')[1]
+  const token = await createToken({
+    id: '1',
+    username: 'admin',
+  })
 
-  try {
-    const decoded = await verify(token, JWT_SECRET)
+  setCookie(c, 'token', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+    path: '/',
+  })
 
-    // attach user to context
-    c.set('user', decoded)
-
-    await next()
-  } catch (err) {
-    return c.json({ error: 'Invalid or expired token' }, 401)
-  }
+  return c.json({ message: 'Logged in' })
 }
 
 // ========================
-// Get current user helper
+// Logout
 // ========================
-export const getUser = (c: Context) => {
-  return c.get('user')
+export const logoutHandler = (c: Context) => {
+  deleteCookie(c, 'token')
+  return c.json({ message: 'Logged out' })
+}
+
+// ========================
+// Middleware
+// ========================
+export const authMiddleware = async (c: Context, next: Next) => {
+  const token = getCookie(c, 'token')
+
+  if (!token) {
+    return c.json({ error: 'Unauthorized' }, 401)
+  }
+
+  try {
+    const decoded = await verify(token, JWT_SECRET)
+    c.set('user', decoded)
+    await next()
+  } catch {
+    return c.json({ error: 'Invalid or expired token' }, 401)
+  }
 }
