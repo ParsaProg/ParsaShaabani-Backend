@@ -1,17 +1,17 @@
 import { verify } from "hono/jwt";
-// Define the secret key (in the .env)
-const JWT_SECRET = process.env.JWT_SECRET || "";
 export const authMiddleWare = async (c, next) => {
     const authHeader = c.req.header("Authorization");
-    console.log(JWT_SECRET);
-    console.log(authHeader);
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+        return c.json({ error: "Server authentication is not configured" }, 500);
+    }
     // 1. Check if Authorization header exist
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return c.json({ error: "Unauthorized: Missing or invalid token" }, 401);
     }
     const token = authHeader.split(" ")[1];
     try {
-        const payload = await verify(token, JWT_SECRET);
+        const payload = await verify(token, jwtSecret);
         c.set("user", payload);
         await next();
     }
