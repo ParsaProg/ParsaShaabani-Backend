@@ -1,72 +1,26 @@
-import { Context, Next } from 'hono'
-import { sign, verify } from 'hono/jwt'
-import { setCookie, getCookie, deleteCookie } from 'hono/cookie'
+import { Context, Next } from "hono";
+import { verify } from "hono/jwt";
 
-const JWT_SECRET = "kos"
-if (!JWT_SECRET) throw new Error('JWT_SECRET not set')
+// Define the secret key (in the .env)
+const JWT_SECRET = process.env.JWT_SECRET || "";
 
-// ========================
-// Generate Token
-// ========================
-export const createToken = async (payload: any) => {
-  return await sign(
-    {
-      ...payload,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, // 1 day
-    },
-    JWT_SECRET
-  )
-}
+export const authMiddleWare = async (c: Context, next: Next) => {
+  const authHeader = c.req.header("Authorization");
+  console.log(JWT_SECRET);
+  console.log(authHeader)
 
-// ========================
-// Login (set cookie)
-// ========================
-export const loginHandler = async (c: Context) => {
-  const { username, password } = await c.req.json()
-
-  // ⚠️ اینو بعداً با دیتابیس عوض کن
-  if (username !== 'admin' || password !== '1234') {
-    return c.json({ error: 'Invalid credentials' }, 401)
+  // 1. Check if Authorization header exist
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return c.json({ error: "Unauthorized: Missing or invalid token" }, 401);
   }
 
-  const token = await createToken({
-    id: '1',
-    username: 'admin',
-  })
-
-  setCookie(c, 'token', token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'Strict',
-    path: '/',
-  })
-
-  return c.json({ message: 'Logged in' })
-}
-
-// ========================
-// Logout
-// ========================
-export const logoutHandler = (c: Context) => {
-  deleteCookie(c, 'token')
-  return c.json({ message: 'Logged out' })
-}
-
-// ========================
-// Middleware
-// ========================
-export const authMiddleware = async (c: Context, next: Next) => {
-  const token = getCookie(c, 'token')
-
-  if (!token) {
-    return c.json({ error: 'Unauthorized' }, 401)
-  }
+  const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = await verify(token, JWT_SECRET)
-    c.set('user', decoded)
-    await next()
-  } catch {
-    return c.json({ error: 'Invalid or expired token' }, 401)
+    const payload = await verify(token, JWT_SECRET);
+    c.set("user", payload);
+    await next();
+  } catch (e) {
+    return c.json({ error: "Unauthorized: Invalid token" }, 401);
   }
-}
+};
