@@ -4,28 +4,27 @@ import { serve } from "@hono/node-server";
 
 import galleryRoutes from "./routes/gallery.js";
 import messageRoutes from "./routes/messages.js";
-import { loginHandler, logoutHandler } from "./middlewares/auth.js";
+import login from "./routes/login.js";
 
 const app = new Hono();
 
 app.use(
   "/*",
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     credentials: true,
-  })
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  }),
 );
-
-app.post("/login", loginHandler);
-app.post("/logout", logoutHandler);
 
 app.route("/gallery", galleryRoutes);
 app.route("/messages", messageRoutes);
+app.route("/login", login);
 
-// ✅ این خط مهم‌ترینه
 serve({
   fetch: app.fetch,
   port: 3002,
 });
 
-console.log("✅ Server running on http://localhost:3000");  
+export default app;
