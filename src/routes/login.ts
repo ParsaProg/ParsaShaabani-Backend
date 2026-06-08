@@ -12,7 +12,6 @@ login.get("/", async (c) => {
     return c.json({ error: "Configuration error" }, 500);
   }
   const token = await sign(payload, secret);
-  localStorage.setItem("accessToken", token);
   return c.json({ token });
 });
 
