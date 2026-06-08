@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import prisma from "../lib/prisma";
-import { authMiddleWare } from "../middlewares/auth";
+import prisma from "../lib/prisma.js";
+import { authMiddleWare } from "../middlewares/auth.js";
 const gallery = new Hono();
 // GET /gallery
 gallery.get("/", authMiddleWare, async (c) => {
