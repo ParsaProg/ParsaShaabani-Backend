@@ -1,9 +1,10 @@
 import { Hono } from "hono";
 import prisma from "../lib/prisma.js";
+import { authMiddleWare } from "../middlewares/auth.js";
 
 const messages = new Hono();
 
-messages.get("/", async (c) => {
+messages.get("/", authMiddleWare, async (c) => {
   const messagesData = await prisma.connectionMessages.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -30,7 +31,7 @@ messages.post("/", async (c) => {
   }
 });
 
-messages.delete("/:id", async (c) => {
+messages.delete("/:id", authMiddleWare, async (c) => {
   const id = c.req.param("id");
   try {
     const deletedMessage = await prisma.connectionMessages.delete({
