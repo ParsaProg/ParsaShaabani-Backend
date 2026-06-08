@@ -11,11 +11,14 @@ app.use("/*", cors({
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
 }));
+app.get("/", (c) => c.json({ ok: true, service: "portfolio-backend" }));
 app.route("/gallery", galleryRoutes);
 app.route("/messages", messageRoutes);
 app.route("/login", login);
-serve({
-    fetch: app.fetch,
-    port: 3002,
-});
+if (process.env.VERCEL !== "1") {
+    serve({
+        fetch: app.fetch,
+        port: Number(process.env.PORT) || 3002,
+    });
+}
 export default app;
