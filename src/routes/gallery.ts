@@ -1,10 +1,11 @@
 import { Hono } from "hono";
 import prisma from "../lib/prisma";
+import { authMiddleWare } from "../middlewares/auth";
 
 const gallery = new Hono();
 
 // GET /gallery
-gallery.get("/", async (c) => {
+gallery.get("/", authMiddleWare, async (c) => {
   const users = await prisma.gallery.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -12,7 +13,7 @@ gallery.get("/", async (c) => {
 });
 
 // POST /gallery
-gallery.post("/", async (c) => {
+gallery.post("/", authMiddleWare, async (c) => {
   try {
     const body = await c.req.json<{
       picture: string;
@@ -50,7 +51,7 @@ gallery.post("/", async (c) => {
   }
 });
 
-gallery.put("/:id", async (c) => {
+gallery.put("/:id", authMiddleWare, async (c) => {
   const id = c.req.param("id");
   const body = await c.req.json<{
     picture: string;
@@ -86,7 +87,7 @@ gallery.put("/:id", async (c) => {
       data: body,
     });
     return c.json({ success: true, user: user });
-  } catch(err: any) {
+  } catch (err: any) {
     throw new Error("Can't edit data with error: " + err);
   }
 });
